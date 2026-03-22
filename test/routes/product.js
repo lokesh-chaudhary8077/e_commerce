@@ -24,9 +24,35 @@ router.post('/products',async(req,res) => {
 // to show the details of a particular product
 router.get('/products/:id',async(req,res) => {
     const {id} = req.params;
-    const foundProduct = await Product.findById(id);
+    const foundProduct = await Product.findById(id).populate('reviews');
     res.render('products/show',{foundProduct});
 })
 
+//to edit a product
+router.get('/products/:id/edit',async(req,res) => {
+    const {id} = req.params;
+    const foundProduct = await Product.findById(id);
+    res.render('products/edit',{foundProduct});
+})
 
+// to actually update the product
+router.patch('/products/:id',async(req,res) => {
+    const {id} = req.params;
+    const {name,img,price,desc} = req.body;
+    await Product.findByIdAndUpdate(id,{name,img,price,desc});
+    res.redirect(`/products/${id}`);
+});
+
+// to delete a product
+router.delete('/products/:id',async(req,res) => {
+    const {id} = req.params;
+    const product = await Product.findById(id);
+
+    // for(let id of product.reviews){
+    //     await Review.findByIdAndDelete(id);
+    // }
+
+    await Product.findByIdAndDelete(id);
+    res.redirect('/products');
+})
 module.exports = router;
