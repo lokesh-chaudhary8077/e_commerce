@@ -1,25 +1,71 @@
 <% layout('layouts/boilerplate') %>
 <%- include('../partials/navbar') %>  
    <div class="col-8">
-    <form action="/products/<%= foundProduct._id %>?_method=PATCH" method="post">
+    <form action="/products/<%= foundProduct._id %>?_method=PATCH" method="post" class="row g-3 needs-validation" novalidate>
         <div class="mb-3">
           <label for="name" class="form-label">Name</label>
-          <input type="text" class="form-control" id="name" name="name" placeholder="Enter product name" value="<%= foundProduct.name %>">
+          <input type="text" class="form-control" id="name" name="name" placeholder="Enter product name" value="<%= foundProduct.name %>" required>
+          <div class="valid-feedback">
+            Looks good!
+          </div>
+          <div class="invalid-feedback">
+            Please enter a product name.
+          </div>
         </div>
         <div class="mb-3">
           <label for="img">Image:</label>
-          <input type="text" class="form-control" id="img" name="img" placeholder="Enter image URL" value="<%= foundProduct.img %>">
+          <input type="text" class="form-control" id="img" name="img" placeholder="Enter image URL" value="<%= foundProduct.img %>" required>
+          <div class="valid-feedback">
+            Looks good!
+          </div>
+          <div class="invalid-feedback">
+            Please enter a image URL.
+          </div>
         </div>
         <div class="mb-3">
           <label for="price">Price:</label>
-          <input type="text" class="form-control" id="price" name="price" placeholder="Enter product price" value="<%= foundProduct.price %>">
+          <input type="text" class="form-control" id="price" name="price" placeholder="Enter product price" value="<%= foundProduct.price %>" required>
+          <div class="valid-feedback">
+            Looks good!
+          </div>
+          <div class="invalid-feedback">
+            Please enter a product price.
+          </div>
         </div>
         <div class="mb-3">
           <label for="desc">Description:</label>
-          <textarea class="form-control" id="desc" name="desc" rows="5" placeholder="Enter product description"><%= foundProduct.desc %></textarea>
+          <textarea class="form-control" id="desc" name="desc" rows="5" placeholder="Enter product description" required><%= foundProduct.desc %></textarea>
+          <div class="valid-feedback">
+            Looks good!
+          </div>
+          <div class="invalid-feedback">
+            Please enter a product description.
+          </div>
         </div>
         <button type="submit" class="btn btn-primary">Edit Product</button>
     </form>
-   </div>   
+   </div> 
+   
+   <script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+(() => {
+  'use strict'
+
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  const forms = document.querySelectorAll('.needs-validation')
+
+  // Loop over them and prevent submission
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+
+      form.classList.add('was-validated')
+    }, false)
+  })
+})()
+   </script>
 </body>
 </html>
