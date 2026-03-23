@@ -1,11 +1,11 @@
 const express = require('express');
 const Product = require('../models/Product');
 const router = express.Router();
-const {validateProduct} = require('../middleware');
+const {validateProduct,isLoggedIn} = require('../middleware');
 
 
 //to show all the products
-router.get('/products',async(req,res) => {
+router.get('/products',isLoggedIn,async(req,res) => {
     try {
      const products = await Product.find({});
     res.render('products/index',{products});
@@ -16,7 +16,7 @@ router.get('/products',async(req,res) => {
 })
 
 //to show the details of a particular product
-router.get('/product/new',async(req,res) => {
+router.get('/product/new',isLoggedIn,async(req,res) => {
     try {
     res.render('products/new');
     }
@@ -26,10 +26,11 @@ router.get('/product/new',async(req,res) => {
 })
 
 //to create a new product
-router.post('/products',validateProduct,async(req,res) => {
+router.post('/products',validateProduct,isLoggedIn,async(req,res) => {
     try {
         const {name,img,price,desc} = req.body;
         await Product.create({name,img,price,desc})
+        req.flash('success','Product added successfully');
         res.redirect('/products');
     } catch (e) {
         res.status(500).render('error',{err:e.message});
@@ -37,18 +38,18 @@ router.post('/products',validateProduct,async(req,res) => {
 })
 
 // to show the details of a particular product
-router.get('/products/:id',async(req,res) => {
+router.get('/products/:id',isLoggedIn,async(req,res) => {
     try {
         const {id} = req.params;
         const foundProduct = await Product.findById(id).populate('reviews');
-        res.render('products/show',{foundProduct});
+        res.render('products/show',{foundProduct,msg:req.flash('success')});
     } catch (e) {
         res.status(500).render('error',{err:e.message});
     }
 })
 
 //to edit a product
-router.get('/products/:id/edit',async(req,res) => {
+router.get('/products/:id/edit',isLoggedIn,async(req,res) => {
     try {
         const {id} = req.params;
         const foundProduct = await Product.findById(id);
@@ -59,11 +60,12 @@ router.get('/products/:id/edit',async(req,res) => {
 })
 
 // to actually update the product
-router.patch('/products/:id',validateProduct ,async(req,res) => {
+router.patch('/products/:id',validateProduct ,isLoggedIn,async(req,res) => {
     try {
         const {id} = req.params;
         const {name,img,price,desc} = req.body;
         await Product.findByIdAndUpdate(id,{name,img,price,desc});
+        req.flash('success','Product edited successfully');
         res.redirect(`/products/${id}`);
     } catch (e) {
         res.status(500).render('error',{err:e.message});
@@ -71,11 +73,12 @@ router.patch('/products/:id',validateProduct ,async(req,res) => {
 });
 
 // to delete a product
-router.delete('/products/:id',async(req,res) => {
+router.delete('/products/:id',isLoggedIn,async(req,res) => {
     try {
     const {id} = req.params;
     const product = await Product.findById(id);
     await Product.findByIdAndDelete(id);
+    req.flash('success','Product deleted successfully');
     res.redirect('/products');
     } catch (e) {
         res.status(500).render('error',{err:e.message});
