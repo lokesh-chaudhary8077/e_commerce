@@ -1,7 +1,7 @@
 const express = require('express');
 const Product = require('../models/Product');
 const router = express.Router();
-const {validateProduct,isLoggedIn} = require('../middleware');
+const {isSeller,validateProduct,isLoggedIn,isProductAuthor} = require('../middleware');
 
 
 //to show all the products
@@ -15,7 +15,7 @@ router.get('/products',isLoggedIn,async(req,res) => {
      }
 })
 
-//to show the details of a particular product
+//to show the form for new product
 router.get('/product/new',isLoggedIn,async(req,res) => {
     try {
     res.render('products/new');
@@ -25,11 +25,11 @@ router.get('/product/new',isLoggedIn,async(req,res) => {
      }
 })
 
-//to create a new product
-router.post('/products',validateProduct,isLoggedIn,async(req,res) => {
+//to actually add the product   
+router.post('/products',validateProduct,isSeller,isLoggedIn,async(req,res) => {
     try {
         const {name,img,price,desc} = req.body;
-        await Product.create({name,img,price,desc})
+        await Product.create({name,img,price,desc,author:req.user._id})
         req.flash('success','Product added successfully');
         res.redirect('/products');
     } catch (e) {
@@ -73,7 +73,7 @@ router.patch('/products/:id',validateProduct ,isLoggedIn,async(req,res) => {
 });
 
 // to delete a product
-router.delete('/products/:id',isLoggedIn,async(req,res) => {
+router.delete('/products/:id',isLoggedIn,isProductAuthor,async(req,res) => {
     try {
     const {id} = req.params;
     const product = await Product.findById(id);

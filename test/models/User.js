@@ -5,7 +5,19 @@ const userSchema = new mongoose.Schema({
         type: String,
         trim: true,
         required: true  
-    }
+    },
+    role: {
+        type: String,
+        required: true,
+        // enum: ['admin', 'customer'],
+        default: 'customer'
+    },
+    cart: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product'
+        }
+    ]
 });
 userSchema.plugin(passportLocalMongoose);
 

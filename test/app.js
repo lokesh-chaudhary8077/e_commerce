@@ -14,6 +14,7 @@ const User = require('./models/User');
 const productRoute = require('./routes/product');
 const reviewRoute = require('./routes/review');
 const authRoute = require('./routes/auth');
+const cartRoute = require('./routes/cart');
 
 
 
@@ -65,6 +66,7 @@ passport.use(new LocalStrategy(User.authenticate()));
 app.use(productRoute); // to use the product routes
 app.use(reviewRoute); // to use the review routes
 app.use(authRoute); // to use the auth routes
+app.use(cartRoute); // to use the cart routes
 
 
 

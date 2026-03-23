@@ -11,8 +11,8 @@ router.get('/register', (req,res) => {
 // actually want to register the user in my database
 router.post('/register', async (req,res) => {
     try {
-        const { username, email, password } = req.body;
-        const user = new User({ username, email });
+        const { username, email, password , role} = req.body;
+        const user = new User({ username, email, role });
         const newUser = await User.register(user, password);
         req.login(newUser, err => {
             if(err) return next(err);
@@ -37,7 +37,7 @@ router.post('/login',
     failureFlash: true
 })
 , (req,res ) => {
-    
+
     req.flash('success', 'You have successfully logged in!');
     res.redirect('/products');
 });
